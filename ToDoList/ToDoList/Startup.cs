@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ToDoList.Context;
+using ToDoList.Services;
+using ToDoList.Services.Interfaces;
 
 namespace ToDoList
 {
@@ -24,6 +26,8 @@ namespace ToDoList
 
             services.AddDbContext<ToDoListContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Default")));
+
+            services.AddScoped<IBaseHttpClient, BaseHttpClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

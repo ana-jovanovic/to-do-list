@@ -4,8 +4,8 @@ namespace ToDoList.Context.Models
 {
     public class TaskDailyList
     {
-        public Guid TaskId { get; set; }
-        public OneTask Task { get; set; }
+        public Guid OneTaskId { get; set; }
+        public OneTask OneTask { get; set; }
 
 
         public Guid DailyListId { get; set; }

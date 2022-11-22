@@ -31,7 +31,7 @@ namespace ToDoList.Migrations
 
             modelBuilder.Entity("ToDoList.Context.Models.OneTask", b =>
                 {
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid>("OneTaskId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Deadline");
@@ -42,18 +42,18 @@ namespace ToDoList.Migrations
 
                     b.Property<string>("Title");
 
-                    b.HasKey("TaskId");
+                    b.HasKey("OneTaskId");
 
-                    b.ToTable("OneTask");
+                    b.ToTable("Task");
                 });
 
             modelBuilder.Entity("ToDoList.Context.Models.TaskDailyList", b =>
                 {
-                    b.Property<Guid>("TaskId");
+                    b.Property<Guid>("OneTaskId");
 
                     b.Property<Guid>("DailyListId");
 
-                    b.HasKey("TaskId", "DailyListId");
+                    b.HasKey("OneTaskId", "DailyListId");
 
                     b.HasIndex("DailyListId");
 
@@ -72,6 +72,10 @@ namespace ToDoList.Migrations
                     b.HasKey("ToDoListId");
 
                     b.ToTable("ToDoList");
+
+                    b.HasData(
+                        new { ToDoListId = new Guid("1f69c0ca-560c-42ae-972d-d2650ee41c63"), Description = "List of chores", Title = "My todo list" }
+                    );
                 });
 
             modelBuilder.Entity("ToDoList.Context.Models.ToDoListDailyList", b =>
@@ -87,24 +91,6 @@ namespace ToDoList.Migrations
                     b.ToTable("ToDoListDailyList");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.Task", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("Deadline");
-
-                    b.Property<string>("Description");
-
-                    b.Property<bool>("Done");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Task");
-                });
-
             modelBuilder.Entity("ToDoList.Context.Models.TaskDailyList", b =>
                 {
                     b.HasOne("ToDoList.Context.Models.DailyList", "DailyList")
@@ -112,9 +98,9 @@ namespace ToDoList.Migrations
                         .HasForeignKey("DailyListId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ToDoList.Context.Models.OneTask", "Task")
+                    b.HasOne("ToDoList.Context.Models.OneTask", "OneTask")
                         .WithMany("TaskDailyLists")
-                        .HasForeignKey("TaskId")
+                        .HasForeignKey("OneTaskId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

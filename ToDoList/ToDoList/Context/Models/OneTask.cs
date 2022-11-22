@@ -7,7 +7,7 @@ namespace ToDoList.Context.Models
     public class OneTask
     {
         [Key]
-        public Guid TaskId { get; set; }
+        public Guid OneTaskId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime Deadline { get; set; }

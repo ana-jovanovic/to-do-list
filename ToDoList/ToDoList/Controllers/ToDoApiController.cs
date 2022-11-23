@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using ToDoList.Services.Interfaces;
 
 namespace ToDoList.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/todo")]
     [ApiController]
     public class ToDoApiController : ControllerBase
     {
@@ -17,10 +18,10 @@ namespace ToDoList.Controllers
 
         // GET: api/ToDoApi
         [HttpGet]
-        public IEnumerable<string> Get()
+        public string Get()
         {
-            var x = _dataService.GetAllToDoLists();
-            return new string[] { "value1", "value2" };
+            var toDoLists = _dataService.GetAllToDoLists();
+            return JsonConvert.SerializeObject(toDoLists);
         }
 
         // GET: api/ToDoApi/5

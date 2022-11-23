@@ -28,7 +28,8 @@ namespace ToDoList.Services
                 {
                     Id = userToDoList.ToDoListId,
                     Title = userToDoList.Title,
-                    Description = userToDoList.Description
+                    Description = userToDoList.Description,
+                    DailyLists = new List<DailyList>()
                 };
 
                 var dailyListIds = _context.ToDoList
@@ -39,11 +40,10 @@ namespace ToDoList.Services
                     .Select(x => x.DailyListId)
                     .ToList();
 
-                var dailyList = new List<DailyList>();
-                var tasks = new List<DTO.Task>();
-
                 foreach (var dailyListId in dailyListIds)
                 {
+                    var tasks = new List<DTO.Task>();
+
                     var dailyListWithTasks = _context.TaskDailyList.Where(tdl => tdl.DailyListId.Equals(dailyListId))
                         .Join(_context.Task, tdl => tdl.OneTaskId, t => t.OneTaskId,
                             (tdl, t) => new { tdl.DailyListId, t });
@@ -60,14 +60,12 @@ namespace ToDoList.Services
                         });
                     }
 
-                    dailyList.Add(new DailyList
+                    toDoLists.DailyLists.Add(new DailyList
                     {
                         Id = dailyListId,
                         Tasks = tasks
                     });
                 }
-
-                toDoLists.DailyLists = dailyList;
 
                 usersToDoLists.Add(toDoLists);
             }

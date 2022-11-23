@@ -1,24 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ToDoList.Context;
+using ToDoList.Context.Models;
 using ToDoList.DTO;
 using ToDoList.Services.Interfaces;
+using DailyList = ToDoList.DTO.DailyList;
 
 namespace ToDoList.Services
 {
     public class DataService : IDataService
     {
         private readonly ToDoListContext _context;
+        private const int ItemsPerPageDefault = 10;
 
         public DataService(ToDoListContext context)
         {
             _context = context;
         }
 
-        public IList<DTO.ToDoList> GetAllToDoLists()
+        public IList<DTO.ToDoList> GetAllToDoLists(RequestParameters parameters)
         {
             // when having a user, grab all the lists from a user instead of all the lists, and iterate through each
-
             var allUsersLists = _context.ToDoList.ToList();
             var usersToDoLists = new List<DTO.ToDoList>();
 
@@ -46,17 +49,41 @@ namespace ToDoList.Services
 
                     var dailyListWithTasks = _context.TaskDailyList.Where(tdl => tdl.DailyListId.Equals(dailyListId))
                         .Join(_context.Task, tdl => tdl.OneTaskId, t => t.OneTaskId,
-                            (tdl, t) => new { tdl.DailyListId, t });
+                            (tdl, t) => new DailyListWithTask
+                            {
+                                DailyListId = tdl.DailyListId,
+                                OneTaskId = t.OneTaskId,
+                                Title = t.Title,
+                                Description = t.Description,
+                                Deadline = t.Deadline,
+                                Done = t.Done
+                            });
 
-                    foreach (var pair in dailyListWithTasks)
+                    if (!string.IsNullOrEmpty(parameters.Title))
+                    {
+                        dailyListWithTasks = dailyListWithTasks.Where(x => x.Title.Equals(parameters.Title));
+                    }
+
+                    if (parameters.Date != null)
+                    {
+                        dailyListWithTasks = dailyListWithTasks.Where(x => x.Deadline.Equals(parameters.Date));
+                    }
+
+                    dailyListWithTasks = dailyListWithTasks
+                        .Skip(parameters.Page > 0 ? (parameters.Page - 1) * ItemsPerPageDefault : 0)
+                        .Take(ItemsPerPageDefault);
+
+                    if (!dailyListWithTasks.Any()) continue;
+
+                    foreach (var task in dailyListWithTasks)
                     {
                         tasks.Add(new DTO.Task
                         {
-                            Id = pair.t.OneTaskId,
-                            Title = pair.t.Title,
-                            Description = pair.t.Description,
-                            Deadline = pair.t.Deadline,
-                            Done = pair.t.Done
+                            Id = task.OneTaskId,
+                            Title = task.Title,
+                            Description = task.Description,
+                            Deadline = task.Deadline,
+                            Done = task.Done
                         });
                     }
 
@@ -66,6 +93,8 @@ namespace ToDoList.Services
                         Tasks = tasks
                     });
                 }
+
+                if (!toDoLists.DailyLists.Any()) continue;
 
                 usersToDoLists.Add(toDoLists);
             }

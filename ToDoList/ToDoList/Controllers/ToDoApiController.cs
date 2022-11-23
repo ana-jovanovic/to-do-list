@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using ToDoList.Context.Models;
 using ToDoList.Services.Interfaces;
 
 namespace ToDoList.Controllers
@@ -16,19 +17,12 @@ namespace ToDoList.Controllers
             _dataService = dataService;
         }
 
-        // GET: api/ToDoApi
+        // GET: api/ToDo
         [HttpGet]
-        public string Get()
+        public string Get([FromQuery] RequestParameters parameters)
         {
-            var toDoLists = _dataService.GetAllToDoLists();
+            var toDoLists = _dataService.GetAllToDoLists(parameters);
             return JsonConvert.SerializeObject(toDoLists);
-        }
-
-        // GET: api/ToDoApi/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST: api/ToDoApi

@@ -27,8 +27,8 @@ namespace ToDoList
             services.AddDbContext<ToDoListContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
-            services.AddScoped<IBaseHttpClient, BaseHttpClient>();
             services.AddScoped<IDataService, DataService>();
+            services.AddScoped<IToDoListService, ToDoListService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

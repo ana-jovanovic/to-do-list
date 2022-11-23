@@ -6,5 +6,6 @@ namespace ToDoList.Services.Interfaces
     public interface IDataService
     {
         IList<DTO.ToDoList> GetAllToDoLists(RequestParameters parameters);
+        void CreateToDoList(Context.Models.ToDoList toDoList);
     }
 }

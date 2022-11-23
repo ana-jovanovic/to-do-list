@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using ToDoList.Context.Models;
 using ToDoList.Services.Interfaces;
@@ -11,10 +10,12 @@ namespace ToDoList.Controllers
     public class ToDoApiController : ControllerBase
     {
         private readonly IDataService _dataService;
+        private readonly IToDoListService _toDoListService;
 
-        public ToDoApiController(IDataService dataService)
+        public ToDoApiController(IDataService dataService, IToDoListService toDoListService)
         {
             _dataService = dataService;
+            _toDoListService = toDoListService;
         }
 
         // GET: api/ToDo
@@ -27,8 +28,16 @@ namespace ToDoList.Controllers
 
         // POST: api/ToDoApi
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] DTO.ToDoList toDoList)
         {
+            if (toDoList == null)
+            {
+                return;
+            }
+
+            var list = _toDoListService.CreateNewToDoList(toDoList);
+            _dataService.CreateToDoList(list);
+
         }
 
         // PUT: api/ToDoApi/5

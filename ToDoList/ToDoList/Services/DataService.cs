@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ToDoList.Context;
 using ToDoList.Context.Models;
@@ -102,5 +101,25 @@ namespace ToDoList.Services
             return usersToDoLists;
         }
 
+        public void CreateToDoList(Context.Models.ToDoList toDoList)
+        {
+            _context.ToDoList.Add(toDoList);
+            foreach (var toDoListDailyList in toDoList.ToDoListDailyLists)
+            {
+                _context.ToDoListDailyList.Add(toDoListDailyList);
+                _context.DailyList.Add(toDoListDailyList.DailyList);
+
+                var dailyList = toDoListDailyList.DailyList;
+
+                foreach (var list in dailyList.TaskDailyLists)
+                {
+                    _context.TaskDailyList.Add(list);
+                    _context.DailyList.Add(list.DailyList);
+                    _context.Task.Add(list.OneTask);
+                }
+            }
+
+            _context.SaveChanges();
+        }
     }
 }
